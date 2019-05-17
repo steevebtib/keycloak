@@ -41,6 +41,7 @@ public enum KeycloakSamlAdapterV1QNames implements HasQName {
     ROLE_IDENTIFIERS("RoleIdentifiers"),
     SINGLE_LOGOUT_SERVICE("SingleLogoutService"),
     SINGLE_SIGN_ON_SERVICE("SingleSignOnService"),
+    ALLOWED_CLOCK_SKEW("AllowedClockSkew"),
     SP("SP"),
 
     ATTR_ALIAS(null, "alias"),
@@ -84,6 +85,7 @@ public enum KeycloakSamlAdapterV1QNames implements HasQName {
     ATTR_VALIDATE_ASSERTION_SIGNATURE(null, "validateAssertionSignature"),
     ATTR_VALIDATE_REQUEST_SIGNATURE(null, "validateRequestSignature"),
     ATTR_VALIDATE_RESPONSE_SIGNATURE(null, "validateResponseSignature"),
+    ATTR_UNIT(null, "unit"),
 
     UNKNOWN_ELEMENT("")
     ;

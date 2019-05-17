@@ -19,6 +19,8 @@ package org.keycloak.adapters.saml.config;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.keycloak.adapters.cloned.AdapterHttpClientConfig;
 
 /**
@@ -26,6 +28,23 @@ import org.keycloak.adapters.cloned.AdapterHttpClientConfig;
  * @version $Revision: 1 $
  */
 public class IDP implements Serializable {
+    public Integer getAllowedClockSkew() {
+        return allowedClockSkew;
+    }
+
+    public void setAllowedClockSkew(Integer allowedClockSkew) {
+        this.allowedClockSkew = allowedClockSkew;
+    }
+
+    public TimeUnit getAllowedClockSkewUnit() {
+        return allowedClockSkewUnit;
+    }
+
+    public void setAllowedClockSkewUnit(TimeUnit allowedClockSkewUnit) {
+        this.allowedClockSkewUnit = allowedClockSkewUnit;
+    }
+
+
     public static class SingleSignOnService implements Serializable {
         private Boolean signRequest;
         private Boolean validateResponseSignature;
@@ -270,6 +289,8 @@ public class IDP implements Serializable {
     private AdapterHttpClientConfig httpClientConfig = new HttpClientConfig();
     private boolean signaturesRequired = false;
     private String metadataUrl;
+    private Integer allowedClockSkew;
+    private TimeUnit allowedClockSkewUnit;
 
     public String getEntityID() {
         return entityID;

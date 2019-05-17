@@ -44,10 +44,8 @@ import java.util.Set;
 import org.keycloak.adapters.cloned.HttpClientBuilder;
 import java.net.URI;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
-import java.util.logging.Level;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:bill@burkecentral.com">Bill Burke</a>
@@ -170,7 +168,15 @@ public class DeploymentBuilder {
         sso.setRequestBindingUrl(idp.getSingleSignOnService().getBindingUrl());
         if (idp.getSingleSignOnService().getResponseBinding() != null) {
             sso.setResponseBinding(SamlDeployment.Binding.parseBinding(
-                idp.getSingleSignOnService().getResponseBinding()));
+                    idp.getSingleSignOnService().getResponseBinding()));
+        }
+        if (idp.getAllowedClockSkew() != null) {
+            defaultIDP.setAllowedClockSkew(convertClockSkewInMillis(idp.getAllowedClockSkew(), idp.getAllowedClockSkewUnit()));
+        }
+        sso.setRequestBinding(SamlDeployment.Binding.parseBinding(sp.getIdp().getSingleSignOnService().getRequestBinding()));
+        sso.setRequestBindingUrl(sp.getIdp().getSingleSignOnService().getBindingUrl());
+        if (sp.getIdp().getSingleSignOnService().getResponseBinding() != null) {
+            sso.setResponseBinding(SamlDeployment.Binding.parseBinding(sp.getIdp().getSingleSignOnService().getResponseBinding()));
         }
         if (idp.getSingleSignOnService().getAssertionConsumerServiceUrl() != null) {
             if (! idp.getSingleSignOnService().getAssertionConsumerServiceUrl().endsWith("/saml")) {
@@ -212,6 +218,25 @@ public class DeploymentBuilder {
         defaultIDP.refreshKeyLocatorConfiguration();
 
         return deployment;
+    }
+
+    private int convertClockSkewInMillis(int duration, TimeUnit unit) {
+        long durationMillis = unit.toMillis(duration);
+        switch (unit) {
+            case NANOSECONDS:
+            case MICROSECONDS:
+            log.warn("clock skew value will be rounded");
+            // round the value based on TimeUnit
+                long lowerBoundConv = unit.convert(durationMillis, TimeUnit.MILLISECONDS);
+                long higherBound = durationMillis + 1;
+                long higherBoundConv = unit.convert(higherBound, TimeUnit.MILLISECONDS);
+                // if we are closer to the upper bound then round
+                if (higherBoundConv - duration <= duration - lowerBoundConv) {
+                    durationMillis = higherBound;
+                }
+            default:
+        }
+        return ((Long)durationMillis).intValue();
     }
 
     private void processSigningKey(DefaultSamlDeployment.DefaultIDP idp, Key key, ResourceLoader resourceLoader) throws RuntimeException {
