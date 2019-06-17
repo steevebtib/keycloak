@@ -204,11 +204,11 @@ public class UndertowDeployerHelper {
     }
 
     private String getContextPath(WebArchive archive) {
-        if (archive.contains("/META-INF/context.xml")) {
+        if (archive.contains("/META-INF/context.xml") && (archive.get("/META-INF/context.xml").getAsset() instanceof StringAsset)) {
             StringAsset asset = (StringAsset) archive.get("/META-INF/context.xml").getAsset();
             return asset.getSource().split("path=\"")[1].split("\"")[0];
         } else {
-            return archive.getName().replace(".war", "");
+            return "/".concat(archive.getName().replace(".war", ""));
         }
     }
 }
