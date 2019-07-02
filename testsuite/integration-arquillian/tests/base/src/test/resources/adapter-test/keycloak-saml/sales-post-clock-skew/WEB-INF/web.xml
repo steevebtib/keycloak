@@ -42,7 +42,7 @@
     </filter>
     <filter-mapping>
         <filter-name>AdapterActionsFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/unsecured/*</url-pattern>
     </filter-mapping>
 
     <security-constraint>
